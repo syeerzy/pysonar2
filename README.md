@@ -1,18 +1,20 @@
-<img src="https://travis-ci.org/yinwang0/pysonar2.svg?branch=master">
-
-# PySonar2 - an advanced semantic indexer for Python
+# PySonar2 - a semantic indexer for Python with interprocedural type inference
 
 PySonar2 is a semantic indexer library for Python, designed for batch processing of large code
 bases.
 
-To create high accuracy and quality index of Python, which is very dynamic language, PySonar2
-performs (costly) whole-project interprocedural analysis to infer types of variables, parameters and
-functions. Because of this, PySonar2 generally produces better index than Python IDEs (such as
-PyCharm etc.), while at the same time sacraficing real-time indexing abilities of IDEs.
+Because Python is a highly dynamic language, to create index of high accuracy and quality, PySonar2
+performs interprocedural analysis to infer types. Because of this, PySonar2 generally produces 
+better index than Python IDEs, while at the same time sacrificing real-time indexing capabilities of 
+IDEs.
+
+Notice the term "type inference" here is descriptive rather than prescriptive, meaning the inferred
+types describe how the code is actually used, but does not prescribe how they must be used. So the way
+type inference works here is different from the Hindley-Milner type system.
 
 PySonar2 has been the underlying indexing engine for several large-scale code navigation services,
-such as Google's internal Code Search service, Sourcegraph.com and Insight.io (now part of
-Elasticsearch). It has been used to index millions of lines of Python code.
+such as Google's internal Code Search, sourcegraph.com and insight.io (now part of
+Elastic).
 
 <a href="http://www.yinwang.org/resources/demos/pysonar2/email/header.py.html">
 <img src="http://www.yinwang.org/images/pysonar2.gif" width="70%">
@@ -21,7 +23,7 @@ Elasticsearch). It has been used to index millions of lines of Python code.
 
 ### How to build
 
-    mvn package
+    mvn package -DskipTests
 
 
 ### Demo

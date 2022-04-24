@@ -241,7 +241,7 @@ public class Parser {
             Node func = convert(map.get("func"));
             List<Node> args = convertList(map.get("args"));
             List<Keyword> keywords = convertList(map.get("keywords"));
-            Node kwargs = convert(map.get("kwarg"));
+            Node kwargs = convert(map.get("kwargs"));
             Node starargs = convert(map.get("starargs"));
             return new Call(func, args, keywords, kwargs, starargs, file, start, end, line, col);
         }
@@ -472,10 +472,36 @@ public class Parser {
             } else if (value instanceof String) {
                 strVal = (String) value;
             } else {
-                $.msg("[WARNING] NameConstant contains unrecognized value: " + value + ", please report issue");
+                $.msg("[Please report issue] NameConstant contains unrecognized value: " + value);
                 strVal = "";
             }
             return new Name(strVal, file, start, end, line, col);
+        }
+
+        // Python3's new node type 'Constant'
+        // Just convert to other types and call convert again
+        if (type.equals("Constant")) {
+            Object value = map.get("value");
+
+            if (map.containsKey("num_type")) {
+                map.put("pysonar_node_type", "Num");
+                map.put("n", map.get("value"));
+                return convert(map);
+            }
+            else if (value instanceof String) {
+                map.put("pysonar_node_type", "Str");
+                map.put("s", value);
+                return convert(map);
+            }
+            else if (value instanceof Boolean) {
+                map.put("pysonar_node_type", "NameConstant");
+                return convert(map);
+            }
+            else {
+                $.msg("\n[Please report issue]: Unexpected Constant node: " + type
+                        + "\nnode: " + o + "\nfile: " + file);
+                return new Unsupported(file, start, end, line, col);
+            }
         }
 
         // another name for Name in Python3 func parameters?
@@ -525,7 +551,7 @@ public class Parser {
 
         if (type.equals("Print")) {
             List<Node> values = convertList(map.get("values"));
-            Node destination = convert(map.get("destination"));
+            Node destination = convert(map.get("dest"));
             return new Print(destination, values, file, start, end, line, col);
         }
 
@@ -668,7 +694,9 @@ public class Parser {
             return new Yield(value, file, start, end, line, col);
         }
 
-        $.msg("\n[Please Report]: unexpected ast node: " + type);
+        $.msg("\n[Please report issue]: Unexpected ast node type: " + type
+                + "\nnode: " + o + "\nfile: " + file);
+
         return new Unsupported(file, start, end, line, col);
     }
 
@@ -894,7 +922,7 @@ public class Parser {
         List<Name> result = new ArrayList<>();
 
         for (int i = 0; i < qname.length(); i++) {
-            String name = "";
+            StringBuilder name = new StringBuilder();
             while (Character.isSpaceChar(qname.charAt(i))) {
                 i++;
             }
@@ -905,14 +933,14 @@ public class Parser {
                             qname.charAt(i) == '*') &&
                     qname.charAt(i) != '.')
             {
-                name += qname.charAt(i);
+                name.append(qname.charAt(i));
                 i++;
             }
 
             int nameStop = i;
             int nstart = hasLoc ? start + nameStart : -1;
             int nstop = hasLoc ? start + nameStop : -1;
-            result.add(new Name(name, file, nstart, nstop, 0, 0));
+            result.add(new Name(name.toString(), file, nstart, nstop, 0, 0));
         }
 
         return result;
