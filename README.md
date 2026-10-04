@@ -1,18 +1,21 @@
-# PySonar2 - a semantic indexer for Python with interprocedural type inference
+# PySonar2 - a type inferencer and indexer library for Python
 
-PySonar2 is a semantic indexer library for Python, designed for batch processing of large code
-bases. The resulting index can be used to build code browsers and code search engines.
+PySonar2 is a type inferencer and indexer library for Python, designed for analysing large code bases.
+The resulting index can be used to build code browsers and code search engines.
 
-Python is a highly dynamic language. To achieve high accuracy and quality, PySonar2 performs 
-interprocedural analysis to infer types. PySonar2 generally produces better index than Python IDEs,
-while at the same time sacrificing real-time update capabilities of IDEs.
+PySonar2 has a sophisticated type system and whole-project interprocedural analysis to infer types
+and locate definitions. It handles first-class functions (closures) and control flow correctly.
+As a result, the accuracy of the index often outperforms Python IDEs such as PyCharm.
 
-Notice the term "type inference" here is descriptive rather than prescriptive, meaning the inferred
-types describe how the code is actually used, but does not prescribe how they must be used. So the way
-type inference works here is different from type systems (e.g. Hindley-Milner system).
+PySonar2 uses advanced analysis techniques similar to control-flow analysis (k-CFA, CFA2, etc), but
+with a much simpler theory and without their drawbacks. It is both highly accurate and highly performant,
+thus it became the choice of several large scale code index infrastructures,
 
-PySonar2 has been the underlying indexing engine for several large-scale code navigation services,
-such as Google's internal Code Search, sourcegraph.com and insight.io (now part of elastic).
+Major users include:
+
+- Google
+- Sourcegraph
+- Insight.io (now part of Elastic)
 
 <a href="http://www.yinwang.org/resources/demos/pysonar2/email/header.py.html">
 <img src="http://www.yinwang.org/images/pysonar2.gif" width="70%">
